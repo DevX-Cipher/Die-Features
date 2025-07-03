@@ -60,7 +60,7 @@ var
   WelcomeLabel: TNewStaticText;
 begin
   // Create the welcome page
-  WelcomePage := CreateCustomPage(wpWelcome, 'Welcome to Die Installation', '');
+  WelcomePage := CreateCustomPage(wpWelcome, 'Welcome to DiE Installation', '');
   
   // Create the welcome label with multi-line text
   WelcomeLabel := TNewStaticText.Create(WizardForm);
@@ -69,8 +69,8 @@ begin
   WelcomeLabel.Top := ScaleY(16);
   WelcomeLabel.Width := WelcomePage.SurfaceWidth - ScaleX(32); // Adjust width to fit within page
   WelcomeLabel.Caption :=
-    'Thank you for choosing to install Die, a powerful software tool for binary analysis.' + #13#10 +
-    'Die (Detect It Easy) is designed to provide comprehensive analysis and identification ' + #13#10 + 
+    'Thank you for choosing to install DiE, a powerful software tool for binary analysis.' + #13#10 +
+    'DiE (Detect It Easy) is designed to provide comprehensive analysis and identification ' + #13#10 + 
     'of binary files. It helps reverse engineers, security researchers, and software developers ' + #13#10 +
     'in understanding and examining executable files.' + #13#10#13#10+
     'Key Features:' + #13#10 +
