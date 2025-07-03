@@ -40,7 +40,7 @@ namespace Die_Setup
                     var titleControl = welcomeDialog.Select("Control[@Id='Title']");
                     if (titleControl != null)
                     {
-                        titleControl.SetAttribute("Text", "Welcome to the Die Installer!");
+                        titleControl.SetAttribute("Text", "Welcome to the DiE Installer!");
                     }
                 }
             };
