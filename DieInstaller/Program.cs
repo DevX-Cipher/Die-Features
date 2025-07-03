@@ -12,10 +12,10 @@ namespace Die_Setup
         {
             var buildOutputDir = @"..\release\die";
 
-            var project = new ManagedProject("Die",
-                new Dir(@"%ProgramFiles%\Die",
+            var project = new ManagedProject("Detect-It-Easy",
+                new Dir(@"%ProgramFiles%\Detect-It-Easy",
                     new DirFiles((Path.Combine(buildOutputDir, "*.*"))),
-                    new ExeFileShortcut("Die", "[INSTALLDIR]\\Die.exe", "")
+                    new ExeFileShortcut("Detect-It-Easy", "[INSTALLDIR]\\Die.exe", "")
                     {
                         WorkingDirectory = "[INSTALLDIR]",
                     }));
