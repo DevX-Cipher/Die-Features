@@ -25,7 +25,7 @@ using namespace WinToastLib;
 int main()
 {
     // Define service name and entry point
-    LPCWSTR serviceName = L"MyService";
+    LPCWSTR serviceName = L"DiEService";
     SERVICE_TABLE_ENTRY ServiceTable[] =
     {
         { const_cast<LPWSTR>(serviceName), ServiceMain },
@@ -57,7 +57,7 @@ int main()
 VOID WINAPI ServiceMain(DWORD argc, LPTSTR* argv)
 {
     // Register the service control handler
-    g_ServiceStatusHandle = RegisterServiceCtrlHandler(L"MyService", ServiceCtrlHandler);
+    g_ServiceStatusHandle = RegisterServiceCtrlHandler(L"DiEService", ServiceCtrlHandler);
     if (!g_ServiceStatusHandle)
     {
         std::cerr << "RegisterServiceCtrlHandler failed, error: " << GetLastError() << std::endl;
@@ -287,7 +287,7 @@ void LogMessage(const std::wstring& message)
 void ShowToastNotification(const std::wstring& fileName, const std::wstring& fileInfo)
 {
     // Create a WinToast object
-    WinToast::instance()->setAppName(L"MyService");
+    WinToast::instance()->setAppName(L"DiEService");
     const auto aumi = WinToast::configureAUMI(L"company", L"wintoast", L"wintoastexample", L"20201012");
     WinToast::instance()->setAppUserModelId(aumi);
 
