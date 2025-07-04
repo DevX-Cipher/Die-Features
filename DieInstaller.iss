@@ -7,7 +7,6 @@
 #define MyAppURL "https://github.com/horsicq/DIE-engine"
 #define MyAppExeName "die.exe"
 
-
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
@@ -40,7 +39,6 @@ Name: "contextmenu"; Description: "Add to context menu"; GroupDescription: "{cm:
 [Files]
 Source: "die\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 
-
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
@@ -53,7 +51,6 @@ Filename: "{sys}\regsvr32.exe"; Parameters: "/s ""{app}\DieShellExtension.dll"""
 Filename: "{sys}\regsvr32.exe"; Parameters: "/u /s ""{app}\DieShellExtension.dll"""
 
 [Code]
-
 procedure InitializeWizard;
 var
   WelcomePage: TWizardPage;
@@ -81,7 +78,6 @@ begin
 
   // Adjust font size and style for better readability
   WelcomeLabel.Font.Size := 10;
-
 
   // Set the height of the label based on the text content
   WelcomeLabel.AutoSize := True;
