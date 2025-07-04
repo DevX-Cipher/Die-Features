@@ -10,9 +10,6 @@
 
 using namespace WinToastLib;
 
-
-
-
 /**
  * @brief Entry point for the application.
  *
@@ -22,6 +19,7 @@ using namespace WinToastLib;
  *
  * @return int indicating the exit status of the application.
  */
+
 int main()
 {
     // Define service name and entry point
@@ -54,6 +52,7 @@ int main()
  * @param argc The number of command-line arguments.
  * @param argv An array of command-line arguments.
  */
+
 VOID WINAPI ServiceMain(DWORD argc, LPTSTR* argv)
 {
     // Register the service control handler
@@ -137,6 +136,7 @@ VOID WINAPI ServiceMain(DWORD argc, LPTSTR* argv)
  *
  * @param ctrl The control code sent to the service.
  */
+
 VOID WINAPI ServiceCtrlHandler(DWORD ctrl)
 {
     switch (ctrl)
@@ -149,7 +149,6 @@ VOID WINAPI ServiceCtrlHandler(DWORD ctrl)
     }
 }
 
-
 /**
  * @brief MonitorDownloadFolder monitors a specified folder for changes and takes actions based on them.
  *
@@ -160,6 +159,7 @@ VOID WINAPI ServiceCtrlHandler(DWORD ctrl)
  * @param lpParam Pointer to optional parameters for the function (unused in this implementation).
  * @return DWORD indicating the result of the function execution.
  */
+
 DWORD WINAPI MonitorDownloadFolder(LPVOID lpParam)
 {
     HANDLE hDirectory = CreateFile(g_DownloadFolderPath.c_str(), FILE_LIST_DIRECTORY, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
@@ -253,7 +253,6 @@ DWORD WINAPI MonitorDownloadFolder(LPVOID lpParam)
     return 0;
 }
 
-
 /**
  * @brief LogMessage logs a message to a file.
  *
@@ -262,6 +261,7 @@ DWORD WINAPI MonitorDownloadFolder(LPVOID lpParam)
  *
  * @param message The message to be logged.
  */
+
 void LogMessage(const std::wstring& message)
 {
     std::wofstream logFile(L"C:\\ServiceLog.txt", std::ios::app);
@@ -284,6 +284,7 @@ void LogMessage(const std::wstring& message)
  *
  * @param fileName The name of the file triggering the notification.
  */
+
 void ShowToastNotification(const std::wstring& fileName, const std::wstring& fileInfo)
 {
     // Create a WinToast object
@@ -302,8 +303,6 @@ void ShowToastNotification(const std::wstring& fileName, const std::wstring& fil
     templ.setTextField(L"File System Watcher", WinToastTemplate::FirstLine);
     templ.setTextField(fileInfo, WinToastTemplate::SecondLine);
    
-
-
     // Add a button to the toast notification
     templ.addAction(L"Open");
 
