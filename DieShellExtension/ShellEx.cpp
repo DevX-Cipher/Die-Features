@@ -15,7 +15,7 @@ extern long g_cDllRef;
 
 DieShellMenu::DieShellMenu(void) :m_cRef(1),
 
-    m_pszMenuText(L"Detect it Easy"),
+    m_pszMenuText(L"Detect It Easy"),
     m_pszVerb("Die"),
     m_pwszVerb(L"Die"),
     m_pszVerbCanonicalName("Die"),
