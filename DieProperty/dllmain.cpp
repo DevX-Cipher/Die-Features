@@ -30,6 +30,7 @@ UINT        g_DllRefCount;
  *
  * @param message The message to be logged.
  */
+
 void LogMessage(const std::wstring& message) {
     #ifdef _DEBUG
     wchar_t desktopPath[MAX_PATH]; // Buffer to store the desktop path
@@ -63,6 +64,7 @@ void LogMessage(const std::wstring& message) {
  * @param lpvReserved Reserved parameter.
  * @return BOOL Returns TRUE if the operation succeeds, otherwise FALSE.
  */
+
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
     switch (fdwReason) {
     case DLL_PROCESS_ATTACH:
@@ -90,6 +92,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
  * This constant defines the CLSID (Class Identifier) for the property sheet handler COM object.
  * It is used to identify the COM object when registering or accessing it.
  */
+
 const CLSID CLSID_MyPropertySheetHandler = { 0x05B54455, 0x9F28, 0x436D, { 0x9E, 0x1F, 0x18, 0x48, 0x4C, 0x5A, 0xB7, 0x9A } };
 
 /**
@@ -104,6 +107,7 @@ const CLSID CLSID_MyPropertySheetHandler = { 0x05B54455, 0x9F28, 0x436D, { 0x9E,
  * @param ppv Address of the pointer variable that receives the interface pointer requested in riid.
  * @return HRESULT Returns S_OK if successful, otherwise an error code indicating failure.
  */
+
 HRESULT DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv) {
     LogMessage(L"DllGetClassObject called."); // Log a message
 
@@ -130,7 +134,6 @@ HRESULT DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv) {
     return hResult; // Return the result of the query
 }
 
-
 /**
  * @brief Registers the COM object as a shell extension.
  *
@@ -140,6 +143,7 @@ HRESULT DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv) {
  *
  * @return HRESULT Returns S_OK if registration succeeds, otherwise an error code indicating failure.
  */
+
 HRESULT WINAPI DllRegisterServer() {
     LogMessage(L"DllRegisterServer called."); // Log a message
     HRESULT hr = RegisterShellExtension(g_hInst); // Register the shell extension
@@ -161,6 +165,7 @@ HRESULT WINAPI DllRegisterServer() {
  *
  * @return HRESULT Returns S_OK if unregistration succeeds, otherwise an error code indicating failure.
  */
+
 HRESULT WINAPI DllUnregisterServer() {
     LogMessage(L"DllUnregisterServer called."); // Log a message
     HRESULT hr = UnregisterShellExtension(); // Unregister the shell extension
@@ -177,6 +182,7 @@ HRESULT WINAPI DllUnregisterServer() {
  * @param hModule Handle to the DLL module containing the COM object.
  * @return HRESULT Returns S_OK if registration succeeds, otherwise an error code indicates failure.
  */
+
 HRESULT RegisterShellExtension(HMODULE hModule) {
     HRESULT hr = S_OK; // Initialize result to success
     HKEY hKey = nullptr; // Handle to registry key
@@ -255,6 +261,7 @@ HRESULT RegisterShellExtension(HMODULE hModule) {
  *
  * @return HRESULT Returns S_OK if unregistration succeeds, otherwise an error code indicating failure.
  */
+
 HRESULT UnregisterShellExtension() {
     HRESULT hr = S_OK; // Initialize result to success
 
@@ -274,6 +281,3 @@ HRESULT UnregisterShellExtension() {
 
     return S_OK; // Return success
 }
-
-
-
