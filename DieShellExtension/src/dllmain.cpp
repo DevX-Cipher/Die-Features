@@ -5,109 +5,113 @@
 HINSTANCE g_hInst = NULL;
 long        g_cDllRef = 0;
 
+#pragma comment(linker, "/export:DllCanUnloadNow=DllCanUnloadNow")
+#pragma comment(linker, "/export:DllGetClassObject=DllGetClassObject")
+#pragma comment(linker, "/export:DllRegisterServer=DllRegisterServer")
+#pragma comment(linker, "/export:DllUnregisterServer=DllUnregisterServer")
 
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 {
-    switch (dwReason)
-    {
-    case DLL_PROCESS_ATTACH:
-        g_hInst = hModule;
-        DisableThreadLibraryCalls(hModule);
-        LogMessage(L"DllMain: DLL_PROCESS_ATTACH");
-        break;
+		switch (dwReason)
+		{
+		case DLL_PROCESS_ATTACH:
+				g_hInst = hModule;
+				DisableThreadLibraryCalls(hModule);
+				LogMessage(L"DllMain: DLL_PROCESS_ATTACH");
+				break;
 
-    case DLL_PROCESS_DETACH:
-        LogMessage(L"DllMain: DLL_PROCESS_DETACH");
-        break;
-    }
-    return TRUE;
+		case DLL_PROCESS_DETACH:
+				LogMessage(L"DllMain: DLL_PROCESS_DETACH");
+				break;
+		}
+		return TRUE;
 }
 
-STDAPI DllCanUnloadNow(void)
+extern "C" STDAPI DllCanUnloadNow(void)
 {
-    LogMessage(L"DllCanUnloadNow called");
-    return g_cDllRef > 0 ? S_FALSE : S_OK;
+		LogMessage(L"DllCanUnloadNow called");
+		return g_cDllRef > 0 ? S_FALSE : S_OK;
 }
 
-HRESULT DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv) {
-    LogMessage(L"DllGetClassObject called."); // Log a message
+extern "C" HRESULT DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv) {
+		LogMessage(L"DllGetClassObject called."); // Log a message
 
-    HRESULT hr = CLASS_E_CLASSNOTAVAILABLE;
+		HRESULT hr = CLASS_E_CLASSNOTAVAILABLE;
 
-    if (IsEqualCLSID(CLSID_DieMenu, rclsid))
-    {
-        hr = E_OUTOFMEMORY;
+		if (IsEqualCLSID(CLSID_DieMenu, rclsid))
+		{
+				hr = E_OUTOFMEMORY;
 
-        ClassFactory* pClassFactory = new ClassFactory();
-        if (pClassFactory)
-        {
-            hr = pClassFactory->QueryInterface(riid, ppv);
-            pClassFactory->Release();
-        }
-    }
+				ClassFactory* pClassFactory = new ClassFactory();
+				if (pClassFactory)
+				{
+						hr = pClassFactory->QueryInterface(riid, ppv);
+						pClassFactory->Release();
+				}
+		}
 
-    return hr;
+		return hr;
 }
 
-STDAPI DllRegisterServer(void)
+extern "C" STDAPI DllRegisterServer(void)
 {
-    HRESULT hr;
+		HRESULT hr;
 
-    wchar_t szModule[MAX_PATH];
-    if (GetModuleFileName(g_hInst, szModule, ARRAYSIZE(szModule)) == 0)
-    {
-        hr = HRESULT_FROM_WIN32(GetLastError());
-        return hr;
-    }
+		wchar_t szModule[MAX_PATH];
+		if (GetModuleFileName(g_hInst, szModule, ARRAYSIZE(szModule)) == 0)
+		{
+				hr = HRESULT_FROM_WIN32(GetLastError());
+				return hr;
+		}
 
-    // Register the component.
-    hr = RegisterInprocServer(szModule, CLSID_DieMenu,
-        L"CulcShellExtContextMenuHandler.ShellEx Class",
-        L"Apartment");
-    if (SUCCEEDED(hr))
-    {
-        // Register the context menu handler. The context menu handler is 
-        // associated with the .cpp file class.
-        hr = RegisterShellExtContextMenuHandler(L"*",
-            CLSID_DieMenu,
-            L"CulcShellExtContextMenuHandler.ShellEx");
-    }
-    if (SUCCEEDED(hr))
-    {
-        hr = RegisterShellExtContextMenuHandler(L".lnk",
-            CLSID_DieMenu,
-            L"CulcShellExtContextMenuHandler.FileContextMenuExt");
-    }
+		// Register the component.
+		hr = RegisterInprocServer(szModule, CLSID_DieMenu,
+				L"CulcShellExtContextMenuHandler.ShellEx Class",
+				L"Apartment");
+		if (SUCCEEDED(hr))
+		{
+				// Register the context menu handler. The context menu handler is 
+				// associated with the .cpp file class.
+				hr = RegisterShellExtContextMenuHandler(L"*",
+						CLSID_DieMenu,
+						L"CulcShellExtContextMenuHandler.ShellEx");
+		}
+		if (SUCCEEDED(hr))
+		{
+				hr = RegisterShellExtContextMenuHandler(L".lnk",
+						CLSID_DieMenu,
+						L"CulcShellExtContextMenuHandler.FileContextMenuExt");
+		}
 
-    return hr;
+		return hr;
 }
 
-STDAPI DllUnregisterServer(void)
+extern "C" STDAPI DllUnregisterServer(void)
 {
-    HRESULT hr = S_OK;
+		HRESULT hr = S_OK;
 
-    wchar_t szModule[MAX_PATH];
-    if (GetModuleFileName(g_hInst, szModule, ARRAYSIZE(szModule)) == 0)
-    {
-        hr = HRESULT_FROM_WIN32(GetLastError());
-        return hr;
-    }
+		wchar_t szModule[MAX_PATH];
+		if (GetModuleFileName(g_hInst, szModule, ARRAYSIZE(szModule)) == 0)
+		{
+				hr = HRESULT_FROM_WIN32(GetLastError());
+				return hr;
+		}
 
-    // Unregister the component.
-    hr = UnregisterInprocServer(CLSID_DieMenu);
-    if (SUCCEEDED(hr))
-    {
-        // Unregister the context menu handler.
-        hr = UnregisterShellExtContextMenuHandler(L"*",
-            CLSID_DieMenu);
-    }
-    if (SUCCEEDED(hr))
-    {
-        hr = RegisterShellExtContextMenuHandler(L".lnk",
-            CLSID_DieMenu,
-            L"CulcShellExtContextMenuHandler.FileContextMenuExt");
-    }
+		// Unregister the component.
+		hr = UnregisterInprocServer(CLSID_DieMenu);
+		if (SUCCEEDED(hr))
+		{
+				// Unregister the context menu handler.
+				hr = UnregisterShellExtContextMenuHandler(L"*",
+						CLSID_DieMenu);
+		}
+		if (SUCCEEDED(hr))
+		{
+				hr = RegisterShellExtContextMenuHandler(L".lnk",
+						CLSID_DieMenu,
+						L"CulcShellExtContextMenuHandler.FileContextMenuExt");
+		}
 
-    return hr;
+		return hr;
 }
