@@ -104,10 +104,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>die.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -127,13 +130,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DieService.cpp" />
-    <ClCompile Include="wintoastlib.cpp" />
+    <ClCompile Include="src\DieService.cpp" />
+    <ClCompile Include="src\wintoastlib.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DieService.h" />
-    <ClInclude Include="ToastNotification.h" />
-    <ClInclude Include="wintoastlib.h" />
+    <ClInclude Include="include\DieService.h" />
+    <ClInclude Include="include\ToastNotification.h" />
+    <ClInclude Include="include\wintoastlib.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

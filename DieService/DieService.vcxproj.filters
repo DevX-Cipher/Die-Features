@@ -15,21 +15,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DieService.cpp">
+    <ClCompile Include="src\DieService.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="wintoastlib.cpp">
+    <ClCompile Include="src\wintoastlib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DieService.h">
+    <ClInclude Include="include\DieService.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="wintoastlib.h">
+    <ClInclude Include="include\wintoastlib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ToastNotification.h">
+    <ClInclude Include="include\ToastNotification.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
