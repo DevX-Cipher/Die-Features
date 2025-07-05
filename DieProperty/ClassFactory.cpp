@@ -40,22 +40,22 @@ CClassFactory::~CClassFactory() {
  * @return HRESULT Returns S_OK if the interface is supported, otherwise E_NOINTERFACE.
  */
 STDMETHODIMP CClassFactory::QueryInterface(REFIID riid, LPVOID* ppReturn) {
-	*ppReturn = NULL; // Initialize output parameter
+		*ppReturn = NULL; // Initialize output parameter
 
-	// Check if requested interface matches any supported interfaces
-	if (IsEqualIID(riid, IID_IUnknown))
-		*ppReturn = this; // Return pointer to IUnknown interface
-	else if (IsEqualIID(riid, IID_IClassFactory))
-		*ppReturn = (IClassFactory*)this; // Return pointer to IClassFactory interface
+		// Check if requested interface matches any supported interfaces
+		if (IsEqualIID(riid, IID_IUnknown))
+				*ppReturn = this; // Return pointer to IUnknown interface
+		else if (IsEqualIID(riid, IID_IClassFactory))
+				*ppReturn = (IClassFactory*)this; // Return pointer to IClassFactory interface
 
-	// If requested interface is supported, add a reference and return S_OK
-	if (*ppReturn) {
-		LPUNKNOWN pUnk = (LPUNKNOWN)(*ppReturn); // Cast to LPUNKNOWN
-		pUnk->AddRef(); // Increment reference count
-		return S_OK; // Return success
-	}
+		// If requested interface is supported, add a reference and return S_OK
+		if (*ppReturn) {
+				LPUNKNOWN pUnk = (LPUNKNOWN)(*ppReturn); // Cast to LPUNKNOWN
+				pUnk->AddRef(); // Increment reference count
+				return S_OK; // Return success
+		}
 
-	return E_NOINTERFACE; // Requested interface not supported, return failure
+		return E_NOINTERFACE; // Requested interface not supported, return failure
 }
 
 /**
@@ -67,7 +67,7 @@ STDMETHODIMP CClassFactory::QueryInterface(REFIID riid, LPVOID* ppReturn) {
  */
 STDMETHODIMP_(DWORD) CClassFactory::AddRef()
 {
-    return ++m_ObjRefCount; // Increment and return object reference count
+		return ++m_ObjRefCount; // Increment and return object reference count
 }
 
 /**
@@ -80,20 +80,20 @@ STDMETHODIMP_(DWORD) CClassFactory::AddRef()
  */
 STDMETHODIMP_(DWORD) CClassFactory::Release()
 {
-    --m_ObjRefCount;
+		--m_ObjRefCount;
 
-    // Log the current reference count
-   // std::wstring message = L"Release: Reference count from CClassFactory is now " + std::to_wstring(m_ObjRefCount);
-   // LogMessage(message);
+		// Log the current reference count
+	// std::wstring message = L"Release: Reference count from CClassFactory is now " + std::to_wstring(m_ObjRefCount);
+	// LogMessage(message);
 
-    if (m_ObjRefCount == 0)
-    {
-        LogMessage(L"Release: Deleting the object."); // Log message indicating deletion
-        delete this; // Delete object if reference count reaches 0
-        return 0;
-    }
+		if (m_ObjRefCount == 0)
+		{
+				LogMessage(L"Release: Deleting the object."); // Log message indicating deletion
+				delete this; // Delete object if reference count reaches 0
+				return 0;
+		}
 
-    return m_ObjRefCount; // Return updated object reference count
+		return m_ObjRefCount; // Return updated object reference count
 }
 
 /**
@@ -108,26 +108,26 @@ STDMETHODIMP_(DWORD) CClassFactory::Release()
  */
 STDMETHODIMP CClassFactory::CreateInstance(LPUNKNOWN pUnknown, REFIID riid, LPVOID* ppObject)
 {
-    
-    *ppObject = NULL; // Initialize output parameter
-    if (pUnknown != NULL)
-        return CLASS_E_NOAGGREGATION; // Aggregation not supported
 
-    // Create an instance of the COM object
-    CShellExt* pShellExt = new CShellExt();
-    if (NULL == pShellExt)
-        return E_OUTOFMEMORY; // Failed to allocate memory
+		*ppObject = NULL; // Initialize output parameter
+		if (pUnknown != NULL)
+				return CLASS_E_NOAGGREGATION; // Aggregation not supported
 
-    g_pShellExt = pShellExt;
-    
-    HRESULT hResult = pShellExt->QueryInterface(riid, ppObject); // Query interface for the requested interface
+		// Create an instance of the COM object
+		CShellExt* pShellExt = new CShellExt();
+		if (NULL == pShellExt)
+				return E_OUTOFMEMORY; // Failed to allocate memory
 
-	 if (FAILED(hResult)) {
-        pShellExt->Release();
-        delete pShellExt; // Delete the object to avoid memory leak
-        return hResult;
-    }
+		g_pShellExt = pShellExt;
+
+		HRESULT hResult = pShellExt->QueryInterface(riid, ppObject); // Query interface for the requested interface
+
+		if (FAILED(hResult)) {
+				pShellExt->Release();
+				delete pShellExt; // Delete the object to avoid memory leak
+				return hResult;
+		}
 
 
-    return hResult; // Return result of querying interface
+		return hResult; // Return result of querying interface
 }

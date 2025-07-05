@@ -32,24 +32,24 @@ UINT        g_DllRefCount;
  */
 
 void LogMessage(const std::wstring& message) {
-    #ifdef _DEBUG
-    wchar_t desktopPath[MAX_PATH]; // Buffer to store the desktop path
-    // Attempt to retrieve the desktop directory path
-    if (SUCCEEDED(SHGetFolderPathW(NULL, CSIDL_DESKTOPDIRECTORY, NULL, 0, desktopPath))) {
-        std::wstring logFilePath = std::wstring(desktopPath) + L"\\ServiceLog.txt"; // Construct the log file path
-        std::wofstream logFile(logFilePath, std::ios::app); // Open the log file in append mode
-        if (logFile.is_open()) { // Check if the file was opened successfully
-            logFile << message << std::endl; // Write the message to the log file
-            logFile.close(); // Close the log file
-        }
-        else {
-            std::cerr << "Failed to open log file." << std::endl; // Print error message to standard error stream
-        }
-    }
-    else {
-        std::cerr << "Failed to get desktop directory." << std::endl; // Print error message to standard error stream
-    }
-    #endif
+#ifdef _DEBUG
+		wchar_t desktopPath[MAX_PATH]; // Buffer to store the desktop path
+		// Attempt to retrieve the desktop directory path
+		if (SUCCEEDED(SHGetFolderPathW(NULL, CSIDL_DESKTOPDIRECTORY, NULL, 0, desktopPath))) {
+				std::wstring logFilePath = std::wstring(desktopPath) + L"\\ServiceLog.txt"; // Construct the log file path
+				std::wofstream logFile(logFilePath, std::ios::app); // Open the log file in append mode
+				if (logFile.is_open()) { // Check if the file was opened successfully
+						logFile << message << std::endl; // Write the message to the log file
+						logFile.close(); // Close the log file
+				}
+				else {
+						std::cerr << "Failed to open log file." << std::endl; // Print error message to standard error stream
+				}
+		}
+		else {
+				std::cerr << "Failed to get desktop directory." << std::endl; // Print error message to standard error stream
+		}
+#endif
 }
 
 /**
@@ -66,24 +66,24 @@ void LogMessage(const std::wstring& message) {
  */
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
-    switch (fdwReason) {
-    case DLL_PROCESS_ATTACH:
-        // Initialize DLL
-        g_hInst = (HINSTANCE)hinstDLL; // Store the instance handle
-        LogMessage(L"DLL attached."); // Log a message indicating DLL attachment
-        break;
-    case DLL_PROCESS_DETACH:
-        // Cleanup DLL
-        LogMessage(L"DLL detached."); // Log a message indicating DLL detachment
-        break;
-    case DLL_THREAD_ATTACH:
-        // Do thread-specific initialization
-        break;
-    case DLL_THREAD_DETACH:
-        // Do thread-specific cleanup
-        break;
-    }
-    return TRUE; // Operation succeeded
+		switch (fdwReason) {
+		case DLL_PROCESS_ATTACH:
+				// Initialize DLL
+				g_hInst = (HINSTANCE)hinstDLL; // Store the instance handle
+				LogMessage(L"DLL attached."); // Log a message indicating DLL attachment
+				break;
+		case DLL_PROCESS_DETACH:
+				// Cleanup DLL
+				LogMessage(L"DLL detached."); // Log a message indicating DLL detachment
+				break;
+		case DLL_THREAD_ATTACH:
+				// Do thread-specific initialization
+				break;
+		case DLL_THREAD_DETACH:
+				// Do thread-specific cleanup
+				break;
+		}
+		return TRUE; // Operation succeeded
 }
 
 /**
@@ -109,29 +109,29 @@ const CLSID CLSID_MyPropertySheetHandler = { 0x05B54455, 0x9F28, 0x436D, { 0x9E,
  */
 
 HRESULT DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv) {
-    LogMessage(L"DllGetClassObject called."); // Log a message
+		LogMessage(L"DllGetClassObject called."); // Log a message
 
-    *ppv = NULL; // Initialize output parameter
+		*ppv = NULL; // Initialize output parameter
 
-    // Check if the requested CLSID matches the CLSID of the property sheet handler COM object
-    if (!IsEqualCLSID(rclsid, CLSID_MyPropertySheetHandler))
-        return CLASS_E_CLASSNOTAVAILABLE; // The requested CLSID is not supported
+		// Check if the requested CLSID matches the CLSID of the property sheet handler COM object
+		if (!IsEqualCLSID(rclsid, CLSID_MyPropertySheetHandler))
+				return CLASS_E_CLASSNOTAVAILABLE; // The requested CLSID is not supported
 
-    // Create a new instance of the class factory
-    CClassFactory* pClassFactory = new CClassFactory();
-    if (pClassFactory == NULL)
-        return E_OUTOFMEMORY; // Memory allocation failed
+		// Create a new instance of the class factory
+		CClassFactory* pClassFactory = new CClassFactory();
+		if (pClassFactory == NULL)
+				return E_OUTOFMEMORY; // Memory allocation failed
 
-    // Query the requested interface for the class factory object
-    HRESULT hResult = pClassFactory->QueryInterface(riid, ppv);
+		// Query the requested interface for the class factory object
+		HRESULT hResult = pClassFactory->QueryInterface(riid, ppv);
 
-    // Only release the object if QueryInterface failed
-    if (FAILED(hResult)) {
-        LogMessage(L"DllGetClassObject: QueryInterface failed. Releasing CClassFactory object."); // Log message indicating QueryInterface failure
-        pClassFactory->Release(); // Release the reference to the class factory
-    }
+		// Only release the object if QueryInterface failed
+		if (FAILED(hResult)) {
+				LogMessage(L"DllGetClassObject: QueryInterface failed. Releasing CClassFactory object."); // Log message indicating QueryInterface failure
+				pClassFactory->Release(); // Release the reference to the class factory
+		}
 
-    return hResult; // Return the result of the query
+		return hResult; // Return the result of the query
 }
 
 /**
@@ -145,15 +145,15 @@ HRESULT DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv) {
  */
 
 HRESULT WINAPI DllRegisterServer() {
-    LogMessage(L"DllRegisterServer called."); // Log a message
-    HRESULT hr = RegisterShellExtension(g_hInst); // Register the shell extension
-    if (SUCCEEDED(hr)) {
-        LogMessage(L"RegisterShellExtension succeeded."); // Log success
-    }
-    else {
-        LogMessage(L"RegisterShellExtension failed."); // Log failure
-    }
-    return hr; // Return the result of the registration operation
+		LogMessage(L"DllRegisterServer called."); // Log a message
+		HRESULT hr = RegisterShellExtension(g_hInst); // Register the shell extension
+		if (SUCCEEDED(hr)) {
+				LogMessage(L"RegisterShellExtension succeeded."); // Log success
+		}
+		else {
+				LogMessage(L"RegisterShellExtension failed."); // Log failure
+		}
+		return hr; // Return the result of the registration operation
 }
 
 /**
@@ -167,9 +167,9 @@ HRESULT WINAPI DllRegisterServer() {
  */
 
 HRESULT WINAPI DllUnregisterServer() {
-    LogMessage(L"DllUnregisterServer called."); // Log a message
-    HRESULT hr = UnregisterShellExtension(); // Unregister the shell extension
-    return hr; // Return the result of the unregistration operation
+		LogMessage(L"DllUnregisterServer called."); // Log a message
+		HRESULT hr = UnregisterShellExtension(); // Unregister the shell extension
+		return hr; // Return the result of the unregistration operation
 }
 
 /**
@@ -184,72 +184,72 @@ HRESULT WINAPI DllUnregisterServer() {
  */
 
 HRESULT RegisterShellExtension(HMODULE hModule) {
-    HRESULT hr = S_OK; // Initialize result to success
-    HKEY hKey = nullptr; // Handle to registry key
-    DWORD dwDisposition; // Variable to receive disposition of the registry key
+		HRESULT hr = S_OK; // Initialize result to success
+		HKEY hKey = nullptr; // Handle to registry key
+		DWORD dwDisposition; // Variable to receive disposition of the registry key
 
-    // Define the path of the DLL module
-    wchar_t szModule[MAX_PATH];
-    GetModuleFileName(hModule, szModule, ARRAYSIZE(szModule));
-    LogMessage(szModule); // Log the DLL module path
+		// Define the path of the DLL module
+		wchar_t szModule[MAX_PATH];
+		GetModuleFileName(hModule, szModule, ARRAYSIZE(szModule));
+		LogMessage(szModule); // Log the DLL module path
 
-    // Create a registry key under HKEY_CLASSES_ROOT\CLSID\{05B54455-9F28-436D-9E1F-18484C5AB79A}
-    hr = RegCreateKeyEx(HKEY_CLASSES_ROOT, L"CLSID\\{05B54455-9F28-436D-9E1F-18484C5AB79A}", 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &hKey, &dwDisposition);
-    if (hr != ERROR_SUCCESS) {
-        LogMessage(L"Failed to create registry key for CLSID."); // Log failure
-        return hr; // Return error code
-    }
+		// Create a registry key under HKEY_CLASSES_ROOT\CLSID\{05B54455-9F28-436D-9E1F-18484C5AB79A}
+		hr = RegCreateKeyEx(HKEY_CLASSES_ROOT, L"CLSID\\{05B54455-9F28-436D-9E1F-18484C5AB79A}", 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &hKey, &dwDisposition);
+		if (hr != ERROR_SUCCESS) {
+				LogMessage(L"Failed to create registry key for CLSID."); // Log failure
+				return hr; // Return error code
+		}
 
-    // Set the default value to "My Property Sheet Handler"
-    hr = RegSetValueEx(hKey, nullptr, 0, REG_SZ, reinterpret_cast<const BYTE*>(L"My Property Sheet Handler"), sizeof(L"My Property Sheet Handler"));
-    if (hr != ERROR_SUCCESS) {
-        LogMessage(L"Failed to set default value for CLSID key."); // Log failure
-        RegCloseKey(hKey); // Close the registry key
-        return hr; // Return error code
-    }
-    RegCloseKey(hKey); // Close the registry key
+		// Set the default value to "My Property Sheet Handler"
+		hr = RegSetValueEx(hKey, nullptr, 0, REG_SZ, reinterpret_cast<const BYTE*>(L"My Property Sheet Handler"), sizeof(L"My Property Sheet Handler"));
+		if (hr != ERROR_SUCCESS) {
+				LogMessage(L"Failed to set default value for CLSID key."); // Log failure
+				RegCloseKey(hKey); // Close the registry key
+				return hr; // Return error code
+		}
+		RegCloseKey(hKey); // Close the registry key
 
-    // Create a registry key under HKEY_CLASSES_ROOT\CLSID\{05B54455-9F28-436D-9E1F-18484C5AB79A}\InProcServer32
-    hr = RegCreateKeyEx(HKEY_CLASSES_ROOT, L"CLSID\\{05B54455-9F28-436D-9E1F-18484C5AB79A}\\InprocServer32", 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &hKey, &dwDisposition);
-    if (hr != ERROR_SUCCESS) {
-        LogMessage(L"Failed to create registry key for InProcServer32."); // Log failure
-        return hr; // Return error code
-    }
+		// Create a registry key under HKEY_CLASSES_ROOT\CLSID\{05B54455-9F28-436D-9E1F-18484C5AB79A}\InProcServer32
+		hr = RegCreateKeyEx(HKEY_CLASSES_ROOT, L"CLSID\\{05B54455-9F28-436D-9E1F-18484C5AB79A}\\InprocServer32", 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &hKey, &dwDisposition);
+		if (hr != ERROR_SUCCESS) {
+				LogMessage(L"Failed to create registry key for InProcServer32."); // Log failure
+				return hr; // Return error code
+		}
 
-    // Set the default value to the path of the DLL module
-    hr = RegSetValueEx(hKey, nullptr, 0, REG_SZ, reinterpret_cast<const BYTE*>(szModule), (lstrlen(szModule) + 1) * sizeof(wchar_t));
-    if (hr != ERROR_SUCCESS) {
-        LogMessage(L"Failed to set default value for InProcServer32 key."); // Log failure
-        RegCloseKey(hKey); // Close the registry key
-        return hr; // Return error code
-    }
+		// Set the default value to the path of the DLL module
+		hr = RegSetValueEx(hKey, nullptr, 0, REG_SZ, reinterpret_cast<const BYTE*>(szModule), (lstrlen(szModule) + 1) * sizeof(wchar_t));
+		if (hr != ERROR_SUCCESS) {
+				LogMessage(L"Failed to set default value for InProcServer32 key."); // Log failure
+				RegCloseKey(hKey); // Close the registry key
+				return hr; // Return error code
+		}
 
-    // Set the ThreadingModel value to "Apartment"
-    hr = RegSetValueEx(hKey, L"ThreadingModel", 0, REG_SZ, reinterpret_cast<const BYTE*>(L"Apartment"), (wcslen(L"Apartment") + 1) * sizeof(wchar_t));
-    if (hr != ERROR_SUCCESS) {
-        LogMessage(L"Failed to set ThreadingModel value for InProcServer32 key."); // Log failure
-        RegCloseKey(hKey); // Close the registry key
-        return hr; // Return error code
-    }
-    RegCloseKey(hKey); // Close the registry key
+		// Set the ThreadingModel value to "Apartment"
+		hr = RegSetValueEx(hKey, L"ThreadingModel", 0, REG_SZ, reinterpret_cast<const BYTE*>(L"Apartment"), (wcslen(L"Apartment") + 1) * sizeof(wchar_t));
+		if (hr != ERROR_SUCCESS) {
+				LogMessage(L"Failed to set ThreadingModel value for InProcServer32 key."); // Log failure
+				RegCloseKey(hKey); // Close the registry key
+				return hr; // Return error code
+		}
+		RegCloseKey(hKey); // Close the registry key
 
-    // Create registry entries to associate the property sheet handler with .txt files
-    hr = RegCreateKeyEx(HKEY_CLASSES_ROOT, L"*\\shellex\\PropertySheetHandlers\\{05B54455-9F28-436D-9E1F-18484C5AB79A}", 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &hKey, &dwDisposition);
-    if (hr != ERROR_SUCCESS) {
-        LogMessage(L"Failed to create registry key for .txt files."); // Log failure
-        return hr; // Return error code
-    }
+		// Create registry entries to associate the property sheet handler with .txt files
+		hr = RegCreateKeyEx(HKEY_CLASSES_ROOT, L"*\\shellex\\PropertySheetHandlers\\{05B54455-9F28-436D-9E1F-18484C5AB79A}", 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &hKey, &dwDisposition);
+		if (hr != ERROR_SUCCESS) {
+				LogMessage(L"Failed to create registry key for .txt files."); // Log failure
+				return hr; // Return error code
+		}
 
-    // Set the default value to "My Property Sheet Handler"
-    hr = RegSetValueEx(hKey, nullptr, 0, REG_SZ, reinterpret_cast<const BYTE*>(L"My Property Sheet Handler"), sizeof(L"My Property Sheet Handler"));
-    if (hr != ERROR_SUCCESS) {
-        LogMessage(L"Failed to set default value for .txt files key."); // Log failure
-        RegCloseKey(hKey); // Close the registry key
-        return hr; // Return error code
-    }
-    RegCloseKey(hKey); // Close the registry key
+		// Set the default value to "My Property Sheet Handler"
+		hr = RegSetValueEx(hKey, nullptr, 0, REG_SZ, reinterpret_cast<const BYTE*>(L"My Property Sheet Handler"), sizeof(L"My Property Sheet Handler"));
+		if (hr != ERROR_SUCCESS) {
+				LogMessage(L"Failed to set default value for .txt files key."); // Log failure
+				RegCloseKey(hKey); // Close the registry key
+				return hr; // Return error code
+		}
+		RegCloseKey(hKey); // Close the registry key
 
-    return S_OK; // Return success
+		return S_OK; // Return success
 }
 
 /**
@@ -263,21 +263,21 @@ HRESULT RegisterShellExtension(HMODULE hModule) {
  */
 
 HRESULT UnregisterShellExtension() {
-    HRESULT hr = S_OK; // Initialize result to success
+		HRESULT hr = S_OK; // Initialize result to success
 
-    // Delete registry entries for the property sheet handler under CLSID
-    hr = RegDeleteTree(HKEY_CLASSES_ROOT, L"CLSID\\{05B54455-9F28-436D-9E1F-18484C5AB79A}");
-    if (hr != ERROR_SUCCESS) {
-        LogMessage(L"Failed to delete registry key for CLSID."); // Log failure
-        return hr; // Return error code
-    }
+		// Delete registry entries for the property sheet handler under CLSID
+		hr = RegDeleteTree(HKEY_CLASSES_ROOT, L"CLSID\\{05B54455-9F28-436D-9E1F-18484C5AB79A}");
+		if (hr != ERROR_SUCCESS) {
+				LogMessage(L"Failed to delete registry key for CLSID."); // Log failure
+				return hr; // Return error code
+		}
 
-    // Delete registry entries for the property sheet handler under .txt files
-    hr = RegDeleteTree(HKEY_CLASSES_ROOT, L"*\\shellex\\PropertySheetHandlers\\{05B54455-9F28-436D-9E1F-18484C5AB79A}");
-    if (hr != ERROR_SUCCESS) {
-        LogMessage(L"Failed to delete registry key for .txt files."); // Log failure
-        return hr; // Return error code
-    }
+		// Delete registry entries for the property sheet handler under .txt files
+		hr = RegDeleteTree(HKEY_CLASSES_ROOT, L"*\\shellex\\PropertySheetHandlers\\{05B54455-9F28-436D-9E1F-18484C5AB79A}");
+		if (hr != ERROR_SUCCESS) {
+				LogMessage(L"Failed to delete registry key for .txt files."); // Log failure
+				return hr; // Return error code
+		}
 
-    return S_OK; // Return success
+		return S_OK; // Return success
 }
