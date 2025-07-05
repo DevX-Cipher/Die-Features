@@ -112,6 +112,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)res</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -140,27 +141,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ClassFactory.h" />
-    <ClInclude Include="framework.h" />
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="Reg.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="ShellEx.h" />
+    <ClInclude Include="include\ClassFactory.h" />
+    <ClInclude Include="include\framework.h" />
+    <ClInclude Include="include\pch.h" />
+    <ClInclude Include="include\Reg.h" />
+    <ClInclude Include="res\resource.h" />
+    <ClInclude Include="include\ShellEx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ClassFactory.cpp" />
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="pch.cpp">
+    <ClCompile Include="src\ClassFactory.cpp" />
+    <ClCompile Include="src\dllmain.cpp" />
+    <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Reg.cpp" />
-    <ClCompile Include="ShellEx.cpp" />
+    <ClCompile Include="src\Reg.cpp" />
+    <ClCompile Include="src\ShellEx.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Resource.rc" />
+    <ResourceCompile Include="res\Resource.rc" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source.def" />
