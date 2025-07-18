@@ -167,171 +167,9 @@ std::wstring CFileDetailsShellExt::GetFileInformation(const std::wstring& filePa
   }
 }
 
-bool CFileDetailsShellExt::AppendVersionInfo(const std::wstring& filename, std::wstringstream& sTooltip)
-{
-  DWORD dwHandle = 0;
-  DWORD dwSize = GetFileVersionInfoSizeW(filename.c_str(), &dwHandle);
-  if (dwSize == 0)
-    return false;
-
-  std::unique_ptr<BYTE[]> pVersionInfoBuffer(new BYTE[dwSize]);
-  if (!GetFileVersionInfoW(filename.c_str(), 0, dwSize, pVersionInfoBuffer.get()))
-    return false;
-
-  LPVOID lpBuffer = nullptr;
-  UINT uLen = 0;
-  bool bFirstItem = true;
-
-  auto AppendInfo = [&](LPCWSTR key, LPCWSTR label) {
-    if (VerQueryValueW(pVersionInfoBuffer.get(), key, &lpBuffer, &uLen) && uLen > 0)
-    {
-      if (!bFirstItem) sTooltip << L"\n";
-      sTooltip << label << static_cast<wchar_t*>(lpBuffer);
-      bFirstItem = false;
-    }
-    };
-  AppendInfo(L"\\StringFileInfo\\040904B0\\FileDescription", L"Description: ");
-  AppendInfo(L"\\StringFileInfo\\040904B0\\CompanyName", L"Company: ");
-  AppendInfo(L"\\StringFileInfo\\040904B0\\FileVersion", L"Version: ");
-
-  return true;
-}
-
-bool CFileDetailsShellExt::AppendShellProperties(const std::wstring& filename, std::wstringstream& sTooltip)
-{
-  IShellItem* pShellItem = nullptr;
-  IPropertyStore* pPropertyStore = nullptr;
-  PROPVARIANT pv;
-  HRESULT hr = SHCreateItemFromParsingName(filename.c_str(), nullptr, IID_PPV_ARGS(&pShellItem));
-  bool success = false;
-
-  if (SUCCEEDED(hr))
-  {
-    hr = pShellItem->BindToHandler(nullptr, BHID_PropertyStore, IID_PPV_ARGS(&pPropertyStore));
-    if (SUCCEEDED(hr))
-    {
-      PropVariantInit(&pv);
-      hr = pPropertyStore->GetValue(PKEY_DateCreated, &pv);
-      if (SUCCEEDED(hr) && pv.vt == VT_FILETIME)
-      {
-        FILETIME ftLocal;
-        SYSTEMTIME st;
-        WCHAR szDateTime[256];
-
-        if (FileTimeToLocalFileTime(&pv.filetime, &ftLocal) &&
-          FileTimeToSystemTime(&ftLocal, &st))
-        {
-          if (GetDateFormatW(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &st, nullptr, szDateTime, ARRAYSIZE(szDateTime)) > 0)
-          {
-            WCHAR szTime[100];
-            if (GetTimeFormatW(LOCALE_USER_DEFAULT, 0, &st, nullptr, szTime, ARRAYSIZE(szTime)) > 0)
-            {
-              if (!sTooltip.str().empty()) sTooltip << L"\n";
-              sTooltip << L"Date created: " << szDateTime << L" " << szTime;
-              success = true;
-            }
-          }
-        }
-      }
-      PropVariantClear(&pv);
-
-      PropVariantInit(&pv);
-      hr = pPropertyStore->GetValue(PKEY_Size, &pv);
-      if (SUCCEEDED(hr) && pv.vt == VT_UI8)
-      {
-        ULONGLONG fileSize = pv.uhVal.QuadPart;
-        WCHAR szSize[100];
-
-        if (fileSize < 1024)
-          swprintf_s(szSize, ARRAYSIZE(szSize), L"%llu bytes", fileSize);
-        else if (fileSize < 1024 * 1024)
-          swprintf_s(szSize, ARRAYSIZE(szSize), L"%llu KB", fileSize / 1024);
-        else if (fileSize < 1024ULL * 1024 * 1024)
-        {
-          double mb = fileSize / (1024.0 * 1024.0);
-          mb = std::floor(mb * 10.0) / 10.0;
-          swprintf_s(szSize, ARRAYSIZE(szSize), L"%.1f MB", mb);
-        }
-        else
-        {
-          double gb = fileSize / (1024.0 * 1024.0 * 1024.0);
-          gb = std::floor(gb * 100.0) / 100.0;
-          swprintf_s(szSize, ARRAYSIZE(szSize), L"%.2f GB", gb);
-        }
-
-        if (!sTooltip.str().empty()) sTooltip << L"\n";
-        sTooltip << L"Size: " << szSize;
-        success = true;
-      }
-      PropVariantClear(&pv);
-    }
-  }
-
-  if (!success)
-  {
-    WIN32_FILE_ATTRIBUTE_DATA fileInfo;
-    if (GetFileAttributesEx(filename.c_str(), GetFileExInfoStandard, &fileInfo))
-    {
-      FILETIME ftLocal;
-      SYSTEMTIME st;
-      WCHAR szDateTime[256];
-
-      if (FileTimeToLocalFileTime(&fileInfo.ftCreationTime, &ftLocal) &&
-        FileTimeToSystemTime(&ftLocal, &st))
-      {
-        if (GetDateFormatW(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &st, nullptr, szDateTime, ARRAYSIZE(szDateTime)) > 0)
-        {
-          WCHAR szTime[100];
-          if (GetTimeFormatW(LOCALE_USER_DEFAULT, 0, &st, nullptr, szTime, ARRAYSIZE(szTime)) > 0)
-          {
-            if (!sTooltip.str().empty()) sTooltip << L"\n";
-            sTooltip << L"Date created: " << szDateTime << L" " << szTime;
-            success = true;
-          }
-        }
-      }
-
-      ULONGLONG fileSize = ((ULONGLONG)fileInfo.nFileSizeHigh << 32) | fileInfo.nFileSizeLow;
-      WCHAR szSize[100];
-
-      if (fileSize < 1024)
-        swprintf_s(szSize, ARRAYSIZE(szSize), L"%llu bytes", fileSize);
-      else if (fileSize < 1024 * 1024)
-        swprintf_s(szSize, ARRAYSIZE(szSize), L"%llu KB", fileSize / 1024);
-      else if (fileSize < 1024ULL * 1024 * 1024)
-      {
-        double mb = fileSize / (1024.0 * 1024.0);
-        mb = std::floor(mb * 10.0) / 10.0;
-        swprintf_s(szSize, ARRAYSIZE(szSize), L"%.1f MB", mb);
-      }
-      else
-      {
-        double gb = fileSize / (1024.0 * 1024.0 * 1024.0);
-        gb = std::floor(gb * 100.0) / 100.0;
-        swprintf_s(szSize, ARRAYSIZE(szSize), L"%.2f GB", gb);
-      }
-
-      if (!sTooltip.str().empty()) sTooltip << L"\n";
-      sTooltip << L"Size: " << szSize;
-      success = true;
-    }
-  }
-
-  if (pPropertyStore) pPropertyStore->Release();
-  if (pShellItem) pShellItem->Release();
-  return success;
-}
-
-
 STDMETHODIMP CFileDetailsShellExt::GetInfoTip(DWORD dwFlags, LPWSTR* ppwszTip)
 {
   UNREFERENCED_PARAMETER(dwFlags);
-
-  std::wstring extension = GetFileExtension(m_sFilename);
-
-  std::map<std::wstring, MetadataHandlerFunc>::const_iterator handlerIt = metadataHandlers.find(extension);
-  if (handlerIt == metadataHandlers.end())
-    return E_FAIL;
 
   LPMALLOC pMalloc = nullptr;
   if (FAILED(SHGetMalloc(&pMalloc)))
@@ -339,10 +177,14 @@ STDMETHODIMP CFileDetailsShellExt::GetInfoTip(DWORD dwFlags, LPWSTR* ppwszTip)
 
   std::wstringstream sTooltip;
 
-  // Call the appropriate handler
-  handlerIt->second(this, m_sFilename, sTooltip);
+  // Use MetadataHandler to append system metadata
+  MetadataHandler handler;
+  if (!handler.AppendMetadataForExtension(m_sFilename, sTooltip))
+  {
+    sTooltip << L"Metadata could not be retrieved for this file type.";
+  }
 
-  // Append scan result
+  // Append custom scan result
   std::wstring dbFolder = GetDllFolderPath();
   std::wstring scanResult = GetFileInformation(m_sFilename, dbFolder);
   if (!scanResult.empty())
@@ -352,6 +194,7 @@ STDMETHODIMP CFileDetailsShellExt::GetInfoTip(DWORD dwFlags, LPWSTR* ppwszTip)
     sTooltip << scanResult;
   }
 
+  // Allocate memory for tooltip
   std::wstring tooltipText = sTooltip.str();
   ULONG cbText = static_cast<ULONG>((tooltipText.length() + 1) * sizeof(wchar_t));
   *ppwszTip = static_cast<LPWSTR>(pMalloc->Alloc(cbText));

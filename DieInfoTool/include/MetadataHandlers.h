@@ -3,18 +3,28 @@
 #include <sstream>
 #include <map>
 
-// Forward declaration of your class
-class CFileDetailsShellExt;
+// Function pointer type for extension-specific metadata handlers
+class MetadataHandler;
 
-// Correct function pointer typedef
-typedef void (*MetadataHandlerFunc)(CFileDetailsShellExt*, const std::wstring&, std::wstringstream&);
+typedef void (*MetadataHandlerFunc)(MetadataHandler*, const std::wstring&, std::wstringstream&);
 
-// Declare the handler map
-extern const std::map<std::wstring, MetadataHandlerFunc> metadataHandlers;
+class MetadataHandler
+{
+public:
+  // Main metadata appenders
+  bool AppendVersionInfo(const std::wstring& filename, std::wstringstream& sTooltip);
+  bool AppendShellProperties(const std::wstring& filename, std::wstringstream& sTooltip);
 
-// Utility function
-std::wstring GetFileExtension(const std::wstring& filename);
+  // Dispatcher based on file extension
+  bool AppendMetadataForExtension(const std::wstring& filename, std::wstringstream& sTooltip);
 
-// Handler declarations
-void HandleExe(CFileDetailsShellExt* self, const std::wstring& file, std::wstringstream& tip);
-void HandleDll(CFileDetailsShellExt* self, const std::wstring& file, std::wstringstream& tip);
+  // Utility
+  static std::wstring GetFileExtension(const std::wstring& filename);
+
+private:
+  static const std::map<std::wstring, MetadataHandlerFunc> metadataHandlers;
+
+  // Internal handlers
+  static void HandleExe(MetadataHandler* self, const std::wstring& file, std::wstringstream& tip);
+  static void HandleDll(MetadataHandler* self, const std::wstring& file, std::wstringstream& tip);
+};
