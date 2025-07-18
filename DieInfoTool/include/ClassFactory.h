@@ -10,7 +10,6 @@ public:
   ClassFactory() : m_refCount(1) { InterlockedIncrement(&g_cDllRef); }
   ~ClassFactory() { InterlockedDecrement(&g_cDllRef); }
 
-  // IUnknown
   STDMETHODIMP QueryInterface(REFIID riid, void** ppv)
   {
     if (!ppv) return E_POINTER;

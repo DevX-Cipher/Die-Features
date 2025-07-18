@@ -8,12 +8,15 @@
 #include <exception>
 #include <vector>
 
+
 #include "CFileDetailsShellExt.h"
+#include "MetadataHandlers.h"
 #include "die.h"
 
 #pragma comment(lib, "Shlwapi.lib")
 #pragma comment(lib, "Propsys.lib")
 #pragma comment(lib, "Version.lib")
+
 
 const CLSID CLSID_TxtInfoShlExt =
 { 0xD4E6F7A1, 0x9C3B, 0x4F8D, { 0xBE, 0x2E, 0x1A, 0x2C, 0x3D, 0x4E, 0x5F, 0x60 } };
@@ -164,16 +167,7 @@ std::wstring CFileDetailsShellExt::GetFileInformation(const std::wstring& filePa
   }
 }
 
-
-
-bool EndsWith(const std::wstring& str, const std::wstring& suffix)
-{
-  if (str.length() < suffix.length())
-    return false;
-  return _wcsicmp(str.c_str() + str.length() - suffix.length(), suffix.c_str()) == 0;
-}
-
-bool AppendVersionInfo(const std::wstring& filename, std::wstringstream& sTooltip)
+bool CFileDetailsShellExt::AppendVersionInfo(const std::wstring& filename, std::wstringstream& sTooltip)
 {
   DWORD dwHandle = 0;
   DWORD dwSize = GetFileVersionInfoSizeW(filename.c_str(), &dwHandle);
@@ -203,7 +197,7 @@ bool AppendVersionInfo(const std::wstring& filename, std::wstringstream& sToolti
   return true;
 }
 
-bool AppendShellProperties(const std::wstring& filename, std::wstringstream& sTooltip)
+bool CFileDetailsShellExt::AppendShellProperties(const std::wstring& filename, std::wstringstream& sTooltip)
 {
   IShellItem* pShellItem = nullptr;
   IPropertyStore* pPropertyStore = nullptr;
@@ -333,7 +327,10 @@ STDMETHODIMP CFileDetailsShellExt::GetInfoTip(DWORD dwFlags, LPWSTR* ppwszTip)
 {
   UNREFERENCED_PARAMETER(dwFlags);
 
-  if (!EndsWith(m_sFilename, L".exe") && !EndsWith(m_sFilename, L".dll"))
+  std::wstring extension = GetFileExtension(m_sFilename);
+
+  std::map<std::wstring, MetadataHandlerFunc>::const_iterator handlerIt = metadataHandlers.find(extension);
+  if (handlerIt == metadataHandlers.end())
     return E_FAIL;
 
   LPMALLOC pMalloc = nullptr;
@@ -342,27 +339,16 @@ STDMETHODIMP CFileDetailsShellExt::GetInfoTip(DWORD dwFlags, LPWSTR* ppwszTip)
 
   std::wstringstream sTooltip;
 
-  if (EndsWith(m_sFilename, L".exe"))
-  {
-    AppendVersionInfo(m_sFilename, sTooltip);
-    AppendShellProperties(m_sFilename, sTooltip);
-  }
-  else
-  {
-    if (AppendShellProperties(m_sFilename, sTooltip))
-    {
-      
-    }
-    else
-    {
-     
-    }
-  }
+  // Call the appropriate handler
+  handlerIt->second(this, m_sFilename, sTooltip);
+
+  // Append scan result
   std::wstring dbFolder = GetDllFolderPath();
   std::wstring scanResult = GetFileInformation(m_sFilename, dbFolder);
   if (!scanResult.empty())
   {
-    if (!sTooltip.str().empty()) sTooltip << L"\n";
+    if (!sTooltip.str().empty())
+      sTooltip << L"\n";
     sTooltip << scanResult;
   }
 
@@ -378,6 +364,7 @@ STDMETHODIMP CFileDetailsShellExt::GetInfoTip(DWORD dwFlags, LPWSTR* ppwszTip)
 
   wcscpy_s(*ppwszTip, tooltipText.length() + 1, tooltipText.c_str());
   pMalloc->Release();
+
   return S_OK;
 }
 

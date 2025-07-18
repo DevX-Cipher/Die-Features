@@ -134,6 +134,7 @@
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile />
       <AdditionalIncludeDirectories>$(ProjectDir)include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -150,10 +151,12 @@
     <ClInclude Include="include\framework.h" />
     <ClInclude Include="include\CFileDetailsShellExt.h" />
     <ClInclude Include="include\ClassFactory.h" />
+	<ClInclude Include="include\MetadataHandlers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\dllmain.cpp" />
     <ClCompile Include="src\CFileDetailsShellExt.cpp" />
+	<ClCompile Include="src\MetadataHandlers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source.def" />

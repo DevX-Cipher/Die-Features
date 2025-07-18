@@ -41,7 +41,8 @@ public:
 
   // Static helper method to get the DLL's folder path.
   static std::wstring GetDllFolderPath();
-
+  bool AppendVersionInfo(const std::wstring& filename, std::wstringstream& sTooltip);
+  bool AppendShellProperties(const std::wstring& filename, std::wstringstream& sTooltip);
   // Private helper method to get file information using an external scanner.
   std::wstring GetFileInformation(const std::wstring& filePath, const std::wstring& pwszDatabase);
 
