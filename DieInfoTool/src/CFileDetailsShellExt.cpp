@@ -125,10 +125,10 @@ std::wstring CFileDetailsShellExt::GetFileInformation(const std::wstring& filePa
     std::vector<char> fileData((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
     if (fileData.empty())
     {
-      return L"File is empty or unreadable.";
+      // File is empty — return nothing
+      return L"";
     }
 
-    // Heuristic-only scan, explicitly avoiding recursive scan
     constexpr unsigned int scanFlags = DIE_HEURISTICSCAN;
 
     wchar_t* resultPtr = DIE_ScanMemoryW(fileData.data(), static_cast<int>(fileData.size()), scanFlags, &mutableDatabasePath[0]);
