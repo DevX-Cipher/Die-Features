@@ -3,8 +3,6 @@ using System.Windows.Forms;
 
 namespace Die_Setup
 {
-
-
     public class WelcomeForm : Form
     {
         private Button continueButton;
@@ -19,7 +17,7 @@ namespace Die_Setup
             continueButton.Dock = DockStyle.Bottom;
             continueButton.Click += new EventHandler(ContinueButton_Click);
 
-            welcomeLabel.Text = "Welcome to the Die Installer!";
+            welcomeLabel.Text = "Welcome to the DiE Installer!";
             welcomeLabel.Dock = DockStyle.Top;
 
             this.Controls.Add(continueButton);
