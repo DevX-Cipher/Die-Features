@@ -15,7 +15,7 @@ namespace Die_Setup
             var project = new ManagedProject("Detect-It-Easy",
                 new Dir(@"%ProgramFiles%\Detect-It-Easy",
                     new DirFiles((Path.Combine(buildOutputDir, "*.*"))),
-                    new ExeFileShortcut("Detect-It-Easy", "[INSTALLDIR]\\Die.exe", "")
+                    new ExeFileShortcut("Detect-It-Easy", "[INSTALLDIR]\\die.exe", "")
                     {
                         WorkingDirectory = "[INSTALLDIR]",
                     }));
