@@ -1,0 +1,3 @@
+[submodule "die_library"]
+	path = die_library
+	url = https://github.com/horsicq/die_library.git
